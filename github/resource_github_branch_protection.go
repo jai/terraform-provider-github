@@ -545,7 +545,11 @@ func expandRequiredPullRequestReviews(d *schema.ResourceData) (*github.PullReque
 			teams := expandNestedSet(m, "dismissal_teams")
 			drr.Teams = &teams
 
-			rprr.DismissalRestrictionsRequest = drr
+			if len(users) == 0 && len(teams) == 0 {
+				rprr.DismissalRestrictionsRequest = nil
+			} else {
+				rprr.DismissalRestrictionsRequest = drr
+			}
 			rprr.DismissStaleReviews = m["dismiss_stale_reviews"].(bool)
 			rprr.RequireCodeOwnerReviews = m["require_code_owner_reviews"].(bool)
 			rprr.RequiredApprovingReviewCount = m["required_approving_review_count"].(int)
